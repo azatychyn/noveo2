@@ -14,7 +14,10 @@ defmodule Noveo.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Noveo.PubSub},
       # Start the Endpoint (http/https)
-      NoveoWeb.Endpoint
+      NoveoWeb.Endpoint,
+      Noveo.Workers.EtsSeed,
+      con_cache_child_spec(:jobs),
+      con_cache_child_spec(:professions)
       # Start a worker by calling: Noveo.Worker.start_link(arg)
       # {Noveo.Worker, arg}
     ]
@@ -23,6 +26,19 @@ defmodule Noveo.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Noveo.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  defp con_cache_child_spec(name) do
+    Supervisor.child_spec(
+      {
+        ConCache,
+        [
+          name: name,
+          ttl_check_interval: false
+        ]
+      },
+      id: {ConCache, name}
+    )
   end
 
   # Tell Phoenix to update the endpoint configuration
