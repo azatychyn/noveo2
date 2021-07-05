@@ -5,7 +5,7 @@ defmodule Noveo.MixProject do
     [
       app: :noveo,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.12.2",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -48,7 +48,7 @@ defmodule Noveo.MixProject do
       {:con_cache, "~> 0.13"},
       {:csv, "~> 2.4"},
       {:scribe, "~> 0.10"},
-      {:topo, "~> 0.4.0"}
+      {:geocalc, "~> 0.8"}
     ]
   end
 
