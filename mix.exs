@@ -47,7 +47,8 @@ defmodule Noveo.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:con_cache, "~> 0.13"},
       {:csv, "~> 2.4"},
-      {:scribe, "~> 0.10"}
+      {:scribe, "~> 0.10"},
+      {:topo, "~> 0.4.0"}
     ]
   end
 

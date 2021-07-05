@@ -52,4 +52,68 @@ defmodule Noveo.Employment do
       index + 1
     end)
   end
+
+  @spec print_table_of_jobs() :: :ok
+  def print_table_of_jobs() do
+    results = get_all_jobs_grouped_by_category_and_continent()
+    headers =
+      Enum.reduce(results, %{}, fn map, acc ->
+        Map.merge(acc, map)
+      end)
+      |> Map.keys()
+
+    Scribe.print(results, [data: headers])
+  end
+
+  defp get_all_jobs_grouped_by_category_and_continent() do
+    statistic_grouped_by_category_and_continent =
+      :jobs
+      |> ConCache.ets()
+      |> :ets.tab2list()
+      |> Enum.group_by(&Noveo.Geocoordinates.detect_continent/1)
+      |> Enum.map(fn {continent, jobs} ->
+        jobs
+        |> group_by_category()
+        |> Map.put("continent", continent)
+      end)
+    total_statistic =
+      statistic_grouped_by_category_and_continent
+      |> Enum.reduce(%{}, fn map, acc ->
+        Map.merge(acc, map, fn key, v1, v2 ->
+          if key == "continent" do
+            "Total"
+          else
+            v1 + v2
+          end
+        end)
+      end)
+
+    [total_statistic | statistic_grouped_by_category_and_continent]
+  end
+
+  defp group_by_category(jobs) do
+    grouped_jobs =
+      jobs
+      |> Enum.group_by(&get_professions_category_from_dict/1)
+      |> Enum.filter(fn {category, _jobs} -> category end)
+      |> Enum.map(fn {category, jobs} -> {category, length(jobs)} end)
+      |> Map.new()
+
+    total =
+      grouped_jobs
+      |> Map.values()
+      |> Enum.sum()
+    Map.put(grouped_jobs, "Total", total)
+  end
+
+  defp get_professions_category_from_dict({_,%{"profession_id" => profession_id}}) do
+    professions_dict()[profession_id]["category_name"]
+  end
+
+  defp professions_dict() do
+    :professions
+    |> ConCache.ets()
+    |> :ets.tab2list()
+    |> Map.new()
+  end
 end
