@@ -53,6 +53,28 @@ defmodule Noveo.Employment do
     end)
   end
 
+  @spec get_jobs_in_radius_of_point(number(), number(), number()) :: [map(), ...]
+  def get_jobs_in_radius_of_point(lat_center, long_center, radius) do
+    center_point = [lat_center, long_center]
+    :jobs
+    |> ConCache.ets()
+    |> :ets.tab2list()
+    |> Enum.reduce([], fn {_, job}, acc ->
+      point = [job["office_latitude"], job["office_longitude"]]
+
+      with  false <- is_nil(List.first(point)),
+            false <- is_nil(List.last(point)),
+            true <- Geocalc.within?(radius, center_point, point)
+      do
+        distance = Geocalc.distance_between(center_point, point)
+        [ Map.put(job, "distance", distance) | acc]
+      else
+        _ ->
+          acc
+      end
+    end)
+  end
+
   @spec print_table_of_jobs() :: :ok
   def print_table_of_jobs() do
     results = get_all_jobs_grouped_by_category_and_continent()

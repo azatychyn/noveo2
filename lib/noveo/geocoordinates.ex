@@ -148,24 +148,6 @@ defmodule Noveo.Geocoordinates do
     end
   end
 
-  # it is not optimized but it works
-  @spec within?(float(), float(), float(), float(), integer) :: {float, boolean()}
-  def within?(_lat_center, _long_center, _lat_point, long_point, _radius)
-      when long_point in ["", nil],
-      do: {0, false}
-
-  def within?(_lat_center, _long_center, lat_point, _long_point, _radius)
-      when lat_point in ["", nil],
-      do: {0, false}
-
-  def within?(_lat_center, _long_center, _lat_point, _long_point, radius) when radius < 0,
-    do: {0, false}
-
-  def within?(lat_center, long_center, lat_point, long_point, radius \\ 10_0000) do
-    distance = distance_between(lat_center, long_center, lat_point, long_point)
-    {distance, distance <= radius}
-  end
-
   defp europe_polygon() do
     Enum.zip_with([@lat_eur, @lon_eur], fn [x, y] -> [x, y] end)
   end
@@ -192,36 +174,5 @@ defmodule Noveo.Geocoordinates do
 
   defp north_america_polygon() do
     Enum.zip_reduce(@lat_north_am, @lon_north_am, [], fn x, y, acc -> [[x, y] | acc] end)
-  end
-
-  defp distance_between(lat_center, long_center, lat_point, long_point, radius \\ @earth_radius) do
-    rad_center = degrees_to_radians(lat_center)
-    rad_point = degrees_to_radians(lat_point)
-    diff_lat = degrees_to_radians(lat_point - lat_center)
-    diff_long = degrees_to_radians(long_point - long_center)
-
-    a =
-      :math.sin(diff_lat / 2) * :math.sin(diff_lat / 2) +
-        :math.cos(rad_center) * :math.cos(rad_point) * :math.sin(diff_long / 2) *
-          :math.sin(diff_long / 2)
-
-    c = 2 * :math.atan2(:math.sqrt(a), :math.sqrt(1 - a))
-    radius * c
-  end
-
-  defp degrees_to_radians(degrees) do
-    normalize_degrees(degrees) * @pi / 180
-  end
-
-  defp normalize_degrees(degrees) when degrees < -180 do
-    normalize_degrees(degrees + 360)
-  end
-
-  defp normalize_degrees(degrees) when degrees > 180 do
-    normalize_degrees(degrees - 360)
-  end
-
-  defp normalize_degrees(degrees) do
-    degrees
   end
 end

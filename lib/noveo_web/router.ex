@@ -16,7 +16,7 @@ defmodule NoveoWeb.Router do
   scope "/", NoveoWeb do
     pipe_through :api
 
-    # get "/", PageController, :index
+    get "/", PageController, :get_jobs
   end
 
   # Other scopes may use custom stacks.
