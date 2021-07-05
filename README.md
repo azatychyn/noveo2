@@ -1,7 +1,7 @@
 # Noveo
 First:
   * Install dependencies with `mix deps.get`
-  * Create database with `mix ecto.reset`
+  * Delete and Create database with `mix ecto.reset`
 Second(To start your Phoenix server):
   * Start Phoenix endpoint with `mix phx.server`
   When you start your app all data of jobs and prefessions would be uploaded to cache

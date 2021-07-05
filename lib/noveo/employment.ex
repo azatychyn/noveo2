@@ -83,6 +83,7 @@ defmodule Noveo.Employment do
         Map.merge(acc, map)
       end)
       |> Map.keys()
+      |> Enum.reverse()
 
     Scribe.print(results, [data: headers])
   end
