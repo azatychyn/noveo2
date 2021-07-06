@@ -33,7 +33,7 @@ defmodule NoveoWeb.PageControllerTest do
     query = "?#{encoded_params}"
 
     conn = get(conn,  Routes.page_path(conn, :get_jobs) <> query)
-    json_response(conn, 400) ==
+    assert json_response(conn, 400) ==
       %{
         "latitude" => "nust be float",
         "longitude" => "nust be float",

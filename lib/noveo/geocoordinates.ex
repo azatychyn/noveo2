@@ -109,9 +109,6 @@ defmodule Noveo.Geocoordinates do
   @lat_north_am [90.0, 90.0, 78.13, 57.5, 15.0, 15.0, 1.25, 1.25, 51.0, 60.0, 60.0]
   @lon_north_am [-168.75, -10.0, -10.0, -37.5, -30.0, -75.0, -82.5, -105.0, -180.0, -180.0, -168.75]
 
-  @earth_radius 6_371_000
-  @pi :math.pi()
-
   @spec detect_continent({integer, map()}) :: String.t()
   def detect_continent({_, %{"office_longitude" => _, "office_latitude" => nil}}), do: "World"
   def detect_continent({_, %{"office_longitude" => nil, "office_latitude" => _}}), do: "World"
